@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bty.blog.dao.PostMapper">
+    <insert id="insertComment">
+        insert into comment(post_id, content, name, email)
+        values (#{comment.postId}, #{comment.content}, #{comment.name}, #{comment.email})
+    </insert>
+    <insert id="insertPostTag">
+        <if test="tagIdList.size>0">
+            insert into post_tag (post_id,tag_id) values
+            <foreach collection="tagIdList" item="tagId" separator="),(" open="(" close=")">
+                #{postId},#{tagId}
+            </foreach>
+        </if>
+    </insert>
+    <insert id="insertPost">
+        insert into post (title, excerpt, content, cover_url)
+        values (#{post.title}, #{post.excerpt}, #{post.content}, #{post.coverUrl})
+    </insert>
+    <insert id="insertTag">
+        insert into tag (name)
+        values (#{tagName})
+    </insert>
+    <update id="updatePost">
+        update post
+        set title=#{post.title},
+            excerpt=#{post.excerpt},
+            content=#{post.content},
+            cover_url=#{post.coverUrl},
+            updated = NOW()
+        where id = #{post.id}
+    </update>
+    <update id="editTag">
+        update tag
+        set name=#{tagName},
+            updated=now()
+        where id = #{tagId}
+    </update>
+    <delete id="deletePostById">
+        delete
+        from post
+        where id = #{postId}
+    </delete>
+    <delete id="deletePostTagByPostId">
+        delete
+        from post_tag
+        where post_id = #{postId}
+    </delete>
+    <delete id="deleteTag">
+        delete
+        from tag
+        where id = #{tagId}
+    </delete>
+
+    <select id="selectPostCardList" resultType="com.bty.blog.entity.vo.PostCard">
+        select id, title, excerpt, created, cover_url
+        from post
+    </select>
+
+    <select id="selectPostDetailById" resultType="com.bty.blog.entity.vo.PostDetail">
+        select id, title,cover_url,excerpt, content, created
+        from post
+        where id = #{id} limit 1
+    </select>
+    <select id="selectTagListByPostId" resultType="com.bty.blog.entity.vo.TagVO">
+        select pt.tag_id as id, t.name as name
+        from post_tag pt
+                 left join tag t
+                           on pt.tag_id = t.id
+        where pt.post_id = #{postId}
+    </select>
+
+    <select id="selectPostCardListByTagId" resultType="com.bty.blog.entity.vo.PostCard">
+        select p.id, p.title, p.excerpt, p.created, p.cover_url
+        from post p
+        where id in
+              (select distinct pt.post_id from post_tag pt where pt.tag_id = #{tagId})
+    </select>
+
+    <select id="selectRecentPostList" resultType="com.bty.blog.entity.vo.PostVO">
+        select id, title
+        from post
+        order by created desc limit ${limit}
+    </select>
+
+    <select id="selectTagList" resultType="com.bty.blog.entity.vo.TagVO">
+        select t.id id, t.name name, count(pt.id) amount
+        from tag t
+            left join post_tag pt
+                on t.id=pt.tag_id
+                group by t.id, t.name
+    </select>
+
+    <select id="selectCommentByPostId" resultType="com.bty.blog.entity.vo.CommentVO">
+        select id, name, content, created
+        from comment
+        where post_id = #{postId} limit 1
+    </select>
+
+    <select id="selectPostIdList" resultType="java.lang.Integer">
+        select id
+        from post
+    </select>
+
+    <select id="selectTagIdList" resultType="java.lang.Integer">
+        select id
+        from tag
+    </select>
+    <select id="selectPostIdByTitle" resultType="java.lang.Integer">
+        select id
+        from post
+        where title = #{title} limit 1
+    </select>
+
+    <select id="countTagPost" resultType="java.lang.Integer">
+        select count(id)
+        from post_tag
+        where tag_id = #{tagId}
+    </select>
+
+    <select id="search" resultType="com.bty.blog.entity.vo.PostCard">
+        select id, title
+        from post
+        where title like concat('%',#{term},'%')
+        order by created asc limit 10
+    </select>
+
+
+</mapper>

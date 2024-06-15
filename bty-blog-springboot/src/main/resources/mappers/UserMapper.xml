@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bty.blog.dao.UserMapper">
+
+
+    <select id="selectUserByUsername" resultType="com.bty.blog.entity.User">
+        select username,password from user where username=#{username}
+    </select>
+    <select id="selectAllUsername" resultType="java.lang.String">
+        select username from user
+    </select>
+</mapper>

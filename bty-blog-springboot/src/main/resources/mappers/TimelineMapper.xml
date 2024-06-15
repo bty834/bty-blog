@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bty.blog.dao.TimelineMapper">
+
+    <insert id="createTimeline">
+        insert into timeline (phase, title, link, sub_title, content, start, end)
+        values (#{timeline.phase}, #{timeline.title}, #{timeline.link}, #{timeline.subTitle}, #{timeline.content},
+                #{timeline.start}, #{timeline.end})
+    </insert>
+
+
+    <update id="updateTimeline">
+        update timeline
+        set phase=#{timeline.phase},
+            title=#{timeline.title},
+            link = #{timeline.link},
+            sub_title = #{timeline.subTitle},
+            content = #{timeline.content},
+            start = #{timeline.start},
+            end = #{timeline.end}
+        where id = #{timeline.id}
+    </update>
+    <delete id="deleteTimelineById">
+        delete from timeline where id = #{timelineId}
+    </delete>
+
+
+    <select id="selectTimelineList" resultType="com.bty.blog.entity.Timeline">
+        select *
+        from timeline
+    </select>
+
+</mapper>

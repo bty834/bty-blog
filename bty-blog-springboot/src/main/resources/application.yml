@@ -1,0 +1,75 @@
+server:
+  port: 8888
+  servlet:
+    context-path: /
+  tomcat:
+    uri-encoding: UTF-8
+    accept-count: 1000
+    threads:
+      max: 800
+      min-spare: 100
+
+mybatis:
+  typeAliasesPackage: com.bty.blog.mybatis.entity
+  mapper-locations: classpath:mappers/*xml
+  config-location: classpath:mybatis-config.xml
+
+spring:
+  servlet:
+    multipart:
+      max-file-size:  40MB
+      max-request-size:  100MB
+      location: /usr/local/spring-boot-blog/static/download
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  banner:
+    charset: UTF-8
+    location: banner.text
+  application:
+    name: bty-blog
+
+# change to your profile
+  profiles:
+    active: dev
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  web:
+    resources:
+      # static resource
+      static-locations: /usr/local/spring-boot-blog/static
+
+# PageHelper
+pagehelper:
+  helperDialect: mysql
+  supportMethodsArguments: true
+  params: count=countSql
+
+password:
+  secret: fde2.
+
+
+token:
+  expire-minutes: 60
+  secret: dfjsfer2334re2342fdsx.
+
+
+
+
+captcha:
+  enabled: true
+  border: false
+  width: 130
+  height: 48
+  font-size: 30
+  char-length: 4
+  font: 微软雅黑
+  expireSeconds: 60
+
+s3:
+  name: filebase
+  key: E2996C21C8B42F304A70
+  secret:
+  endpoint: s3.filebase.com
+  region: us-east-1

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bty.blog.dao.RecordMapper">
+    <insert id="insertRecordCollection">
+        <if test="collectionIdList.size>0">
+            insert into record_collection (record_id,collection_id) values
+            <foreach collection="collectionIdList" item="collectionId" separator="),(" open="(" close=")">
+                #{recordId},#{collectionId}
+            </foreach>
+        </if>
+    </insert>
+    <insert id="insertRecord">
+        insert into record (url, cover_url, title, description, type)
+        values (#{record.url}, #{record.coverUrl}, #{record.title}, #{record.description}, #{record.type})
+    </insert>
+    <insert id="insertCollection">
+        insert into collection (name) values (#{name})
+    </insert>
+    <update id="editRecord">
+        update record
+        set title=#{title},
+            description=#{description}
+        where id = #{id}
+    </update>
+    <update id="updateCollectionName">
+        update collection set name = #{name} where id=#{id}
+    </update>
+
+    <delete id="deleteRecordById">
+        delete
+        from record
+        where id = #{id}
+    </delete>
+    <delete id="deleteRecordCollectionByRecordId">
+        delete
+        from record_collection
+        where record_id = #{id}
+    </delete>
+    <delete id="deleteCollection">
+        delete from collection where id=#{id}
+    </delete>
+
+
+    <select id="selectCollectionList" resultType="com.bty.blog.entity.vo.CollectionVO">
+        select id, name
+        from collection
+    </select>
+
+    <select id="selectRecordList" resultType="com.bty.blog.entity.Record">
+        select id,url, cover_url, type, title, description, created
+        from record
+    </select>
+
+    <select id="selectRecordListByCollectionId" resultType="com.bty.blog.entity.Record">
+        select rc.record_id,r.url, r.cover_url, r.type, r.title, r.description, r.created
+        from record_collection rc
+                 left join record r on r.id = rc.record_id
+        where rc.collection_id = #{collectionId}
+    </select>
+    <select id="selectRecordIdByTitle" resultType="java.lang.Integer">
+        select id from record where title=#{title} limit 1
+    </select>
+    <select id="selectCountRecordCollection" resultType="java.lang.Integer">
+        select count(1) from record_collection where collection_id =#{id}
+    </select>
+</mapper>
